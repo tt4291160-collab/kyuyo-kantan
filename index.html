@@ -1,86 +1,165 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="ja">
+
 <head>
-<meta charset="utf-8">
+
+<meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#172554">
-<title>給与かんたん計算｜残業代・手取り前の給与目安</title>
-<meta name="description" content="月給・勤務時間・残業時間から、残業代と総支給額の目安をかんたん計算。スマホで無料で使えます。">
+
+<title>かんたん給料計算</title>
+
 <style>
-:root{--navy:#172554;--blue:#2563eb;--bg:#f3f6fb;--text:#172033;--muted:#64748b;--line:#dbe3ef;--white:#fff}
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
-header{background:linear-gradient(135deg,#172554,#1d4ed8);color:white;padding:26px 18px 30px}
-.wrap{max-width:760px;margin:auto;padding:0 16px}
-.kicker{font-size:12px;letter-spacing:.08em;opacity:.8;font-weight:700}
-h1{font-size:27px;line-height:1.25;margin:8px 0}header p{margin:10px 0 0;color:#dbeafe}
-main{padding:20px 0 44px}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #0f172a0a}
-h2{font-size:18px;margin:0 0 14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
-.field{margin-bottom:14px}input,select{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:12px;font-size:16px;background:white;color:var(--text)}
-small,.muted{color:var(--muted);font-size:12px}.btn{width:100%;border:0;border-radius:12px;padding:14px 16px;background:var(--blue);color:white;font-weight:800;font-size:16px;cursor:pointer}
-.results{display:grid;grid-template-columns:1fr 1fr;gap:10px}.result{background:#eff6ff;border-radius:12px;padding:14px}.result span{display:block;color:#475569;font-size:12px}.result strong{display:block;font-size:22px;color:#1d4ed8;margin-top:4px;overflow-wrap:anywhere}
-.result.total{grid-column:1/-1;background:#172554}.result.total span,.result.total strong{color:white}.result.total strong{font-size:28px}
-.note{font-size:12px;color:#64748b}.links{display:flex;flex-wrap:wrap;gap:12px;font-size:13px}a{color:#1d4ed8}
-footer{text-align:center;padding:22px 0 35px;color:#64748b;font-size:12px}
-@media(max-width:520px){.grid{grid-template-columns:1fr;gap:0}h1{font-size:24px}.card{padding:16px}.result strong{font-size:19px}}
+
+body{font-family:sans-serif;background:#f2f5fa;margin:0;padding:20px;color:#222}
+
+main{max-width:480px;margin:auto;background:white;padding:22px;border-radius:18px;box-shadow:0 4px 18px #0001}
+
+h1{text-align:center;font-size:25px}
+
+p{color:#666;font-size:13px}
+
+label{display:block;margin-top:16px;font-weight:bold}
+
+input,select{box-sizing:border-box;width:100%;padding:13px;margin-top:6px;border:1px solid #ccc;border-radius:9px;font-size:17px}
+
+button{width:100%;padding:15px;border:0;border-radius:10px;background:#2463eb;color:white;font-size:17px;font-weight:bold;margin-top:20px}
+
+.result{background:#eaf2ff;padding:18px;border-radius:12px;margin-top:20px}
+
+.money{font-size:30px;font-weight:bold;color:#174fc2;overflow-wrap:anywhere}
+
 </style>
+
 </head>
+
 <body>
-<header><div class="wrap">
-<div class="kicker">FREE PAY CALCULATOR</div>
-<h1>給与かんたん計算</h1>
-<p>月給と残業時間から、残業代・総支給額の目安をすばやく計算。</p>
-</div></header>
-<main class="wrap">
-<section class="card">
-<h2>条件を入力</h2>
-<div class="grid">
-<div class="field"><label for="salary">月給（円）</label><input id="salary" type="number" min="0" step="1000" value="243000"></div>
-<div class="field"><label for="hours">月の所定労働時間</label><input id="hours" type="number" min="1" step="1" placeholder="例：160" value="160"><small>例：160時間</small></div>
-<div class="field"><label for="overtime">残業時間（時間）</label><input id="overtime" type="number" min="0" step="0.5" value="20"></div>
-<div class="field"><label for="rate">残業割増率</label><select id="rate"><option value="1.25" selected>通常の時間外（25%増）</option><option value="1.35">法定休日（35%増）</option><option value="1.5">深夜時間外など（条件による）</option><option value="1">割増なし（参考）</option></select></div>
+
+<main>
+
+<h1>💰 かんたん給料計算</h1>
+
+<p>月給・時給どちらにも対応！残業代も計算できます。</p>
+
+<label>給料の種類</label>
+
+<select id="type" onchange="changeType()">
+
+<option value="monthly">月給制</option>
+
+<option value="hourly">時給制</option>
+
+</select>
+
+<label id="payLabel">基本月給（円）</label>
+
+<input id="pay" type="number" placeholder="例：250000">
+
+<label>毎月の手当（円）</label>
+
+<input id="allowance" type="number" value="0">
+
+<label>月の所定労働時間</label>
+
+<input id="hours" type="number" value="160">
+
+<label>残業時間（時間）</label>
+
+<input id="overtime" type="number" value="0">
+
+<label>残業の割増率</label>
+
+<select id="rate">
+
+<option value="1.25">25%増（1.25倍）</option>
+
+<option value="1.35">35%増（1.35倍）</option>
+
+<option value="1.5">50%増（1.5倍）</option>
+
+</select>
+
+<label>深夜労働時間（22時〜翌5時）</label>
+
+<input id="night" type="number" value="0">
+
+<button onclick="calculate()">給料を計算する</button>
+
+<div class="result">
+
+<p>基本給＋手当</p>
+
+<div id="base">0円</div>
+
+<p>残業代（概算）</p>
+
+<div id="over">0円</div>
+
+<p>深夜割増分（概算）</p>
+
+<div id="nightPay">0円</div>
+
+<hr>
+
+<p>月の支給額（税金・社会保険料控除前）</p>
+
+<div class="money" id="total">0円</div>
+
 </div>
-<div class="field"><label for="allowance">残業計算に含める月額手当（円・任意）</label><input id="allowance" type="number" min="0" step="1000" value="0"><small>割増賃金の基礎に含まれる手当だけを入力してください。手当の扱いは種類により異なります。</small></div>
-<button class="btn" id="calc">計算する</button>
-</section>
-<section class="card" aria-live="polite">
-<h2>計算結果（概算）</h2>
-<div class="results">
-<div class="result"><span>時間あたりの基礎賃金</span><strong id="hourly">—</strong></div>
-<div class="result"><span>残業1時間あたり</span><strong id="otHourly">—</strong></div>
-<div class="result"><span>残業代の目安</span><strong id="otPay">—</strong></div>
-<div class="result"><span>月給＋入力した手当</span><strong id="basePay">—</strong></div>
-<div class="result total"><span>残業代込みの総支給目安（税・社会保険料控除前）</span><strong id="total">—</strong></div>
-</div>
-<p class="note">このツールは概算です。実際の割増賃金は、就業規則、賃金に含まれる項目、所定労働時間、深夜労働・休日労働の重複などで変わります。手取り額や税額を計算するものではありません。</p>
-</section>
-<section class="card">
-<h2>このツールについて</h2>
-<p>給与明細の確認や、残業時間に応じた給与の目安を把握するための無料計算ツールです。入力した数値はこのページ内で計算するだけで、外部へ送信しません。</p>
-<div class="links"><a href="#privacy">プライバシーについて</a><a href="#disclaimer">免責事項</a></div>
-<h3 id="privacy">プライバシーについて</h3><p class="note">入力内容はブラウザ内で計算し、保存・送信しません。広告など外部サービスを後から追加する場合は、内容に応じてこの説明を更新してください。</p>
-<h3 id="disclaimer">免責事項</h3><p class="note">本ツールは一般的な計算の目安を提供するもので、給与・労務・税務に関する専門的な助言ではありません。正確な金額は勤務先の給与担当者や専門家に確認してください。</p>
-</section>
+
+<p>※概算です。実際の給与は会社の計算方法、各種手当、法定割増率などで変わります。深夜時間と残業時間が重なる場合、深夜割増分を別途加算します。</p>
+
 </main>
-<footer>© 2026 給与かんたん計算</footer>
+
 <script>
-const yen = n => Math.round(n).toLocaleString('ja-JP') + '円';
-function calculate(){
- const salary=Math.max(0,Number(document.getElementById('salary').value)||0);
- const hours=Math.max(0,Number(document.getElementById('hours').value)||0);
- const overtime=Math.max(0,Number(document.getElementById('overtime').value)||0);
- const allowance=Math.max(0,Number(document.getElementById('allowance').value)||0);
- const rate=Number(document.getElementById('rate').value)||1.25;
- if(hours<=0){alert('月の所定労働時間を1以上で入力してください。');return}
- const hourly=(salary+allowance)/hours, otHourly=hourly*rate, otPay=otHourly*overtime;
- document.getElementById('hourly').textContent=yen(hourly);
- document.getElementById('otHourly').textContent=yen(otHourly);
- document.getElementById('otPay').textContent=yen(otPay);
- document.getElementById('basePay').textContent=yen(salary+allowance);
- document.getElementById('total').textContent=yen(salary+allowance+otPay);
+
+function yen(n){return Math.round(n).toLocaleString('ja-JP')+'円'}
+
+function changeType(){
+
+ document.getElementById('payLabel').textContent=
+
+ document.getElementById('type').value==='monthly'?'基本月給（円）':'時給（円）';
+
 }
-document.getElementById('calc').addEventListener('click',calculate);
-calculate();
+
+function calculate(){
+
+ const type=document.getElementById('type').value;
+
+ const pay=Number(document.getElementById('pay').value)||0;
+
+ const allowance=Number(document.getElementById('allowance').value)||0;
+
+ const hours=Number(document.getElementById('hours').value)||0;
+
+ const ot=Number(document.getElementById('overtime').value)||0;
+
+ const night=Number(document.getElementById('night').value)||0;
+
+ const rate=Number(document.getElementById('rate').value)||1.25;
+
+ const hourly=type==='monthly'?(hours>0?pay/hours:0):pay;
+
+ const base=type==='monthly'?pay+allowance:pay*hours+allowance;
+
+ const over=hourly*ot*rate;
+
+ const nightExtra=hourly*night*0.25;
+
+ document.getElementById('base').textContent=yen(base);
+
+ document.getElementById('over').textContent=yen(over);
+
+ document.getElementById('nightPay').textContent=yen(nightExtra);
+
+ document.getElementById('total').textContent=yen(base+over+nightExtra);
+
+}
+
 </script>
+
 </body>
+
 </html>
